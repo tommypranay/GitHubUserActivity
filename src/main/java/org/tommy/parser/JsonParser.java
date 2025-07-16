@@ -13,11 +13,18 @@ public class JsonParser {
 
     private Object parseObject(String s){
         s = s.trim();
+        if (!s.endsWith("}")) throw new RuntimeException("Invalid JSON object: " + s);
+
         Map<String, Object> map = new LinkedHashMap<>();
+        String body = s.substring(1, s.length() - 1).trim();
+        if (body.isEmpty()) return map;
         String trimmed = s.substring(1,s.length()-1);
         List<String> pairs = splitJsonPairs(trimmed);
         for(String pair: pairs){
             int colonIndex = pair.indexOf(':');
+            if (colonIndex == -1) {
+                throw new IllegalArgumentException("Invalid key-value pair: " + pair);
+            }
             String key = pair.substring(0,colonIndex).trim();
             if(key.startsWith("\"") && key.endsWith("\"")){
                 key=key.substring(1,key.length()-1);
@@ -49,18 +56,28 @@ public class JsonParser {
         List<String> result = new ArrayList<>();
         int level = 0;
         StringBuilder current = new StringBuilder();
+        boolean inString = false;
         for(int i=0; i < s.length(); i++){
             char c = s.charAt(i);
-            if(c == ',' && level==0){
+
+            // If inside a string we have to ignore ','s and brackets '{', '}', '[', ']'
+            if (c == '"' && (i == 0 || s.charAt(i - 1) != '\\')) {
+                inString = !inString;
+            }
+
+            if (c == ',' && level == 0 && !inString) {
                 result.add(current.toString().trim());
                 current.setLength(0);
-            }else{
-                if(c == '{' || c == '[') level++;
-                if(c == '}' || c == ']') level--;
+            } else {
+                if (!inString) {
+                    if (c == '{' || c == '[') level++;
+                    if (c == '}' || c == ']') level--;
+                }
                 current.append(c);
             }
+
         }
-        if(current.length()>0) result.add(current.toString().trim());
+        if(!current.isEmpty()) result.add(current.toString().trim());
         return result;
     }
 

@@ -12,16 +12,17 @@ public class JsonDataHandler {
 
     public JsonDataHandler(){}
 
+    @SuppressWarnings("unchecked")
     public Object extractJsonData(String s){
         Object data = jsonParser.parseJson(s);
         if(data instanceof List<?>){
-            List<JsonData> jsonDataList = new ArrayList<>();
+            List<JsonReader> jsonReaderList = new ArrayList<>();
             List<?> listData = (List<?>)data;
             for(Object obj: listData){
-                jsonDataList.add(JsonData.of((Map<String,Object>) obj));
+                jsonReaderList.add(JsonReader.of((Map<String,Object>) obj));
             }
-            return jsonDataList;
+            return jsonReaderList;
         }
-        return JsonData.of((Map<String, Object>) data);
+        return JsonReader.of((Map<String, Object>) data);
     }
 }

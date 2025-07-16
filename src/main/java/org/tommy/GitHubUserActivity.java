@@ -1,13 +1,13 @@
 package org.tommy;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import org.tommy.model.JsonReader;
+import org.tommy.model.JsonDataHandler;
+
+import java.util.List;
 
 public class GitHubUserActivity {
 
+    @SuppressWarnings("unchecked")
     public void getGitHubUserActivity(String[] args){
         if(args.length==0 || !GitHubUserNameValidator.isValidUserName(args[0])){
             String message = """
@@ -19,23 +19,27 @@ public class GitHubUserActivity {
             System.out.println(message);
             System.exit(1);
         }
+        String userName = args[0];
+        GItHubAPI gItHubAPI = new GItHubAPI();
+        try{
+            String json = gItHubAPI.getGitHubEvents(userName);
+            JsonDataHandler jsonDataHandler = new JsonDataHandler();
+            List<JsonReader> jsonReaderList =  (List<JsonReader>)jsonDataHandler.extractJsonData(json);
+            GitHubEventActivityFormatter formatter = new GitHubEventActivityFormatter();
+            List<String> list = formatter.formatEvents(jsonReaderList);
+            list.forEach(System.out::println);
+
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+
+
     }
 
     public static void main(String[] args) {
         GitHubUserActivity userActivity = new GitHubUserActivity();
         userActivity.getGitHubUserActivity(args);
-
-//        HttpClient client = HttpClient.newHttpClient();
-//
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .uri(URI.create("https://api.github.com/users/kexinhuang12345/events"))
-//                .GET()
-//                .build();
-//
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        System.out.println(response.statusCode());
-//        System.out.println(response.body().charAt(2));
 
     }
 }

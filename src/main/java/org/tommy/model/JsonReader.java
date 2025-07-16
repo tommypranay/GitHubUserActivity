@@ -3,24 +3,23 @@ package org.tommy.model;
 import java.util.List;
 import java.util.Map;
 
-public class JsonData {
+public class JsonReader {
 
     private Map<String, Object> data;
 
     private String delimiter;
 
-    private JsonData(Map<String, Object> data, String delimiter){
+    private JsonReader(Map<String, Object> data, String delimiter){
         this.data = data;
         this.delimiter = delimiter;
     }
 
 
-
-    public static JsonData of(Map<String, Object> data, String delimiter){
-        return new JsonData(data, delimiter);
+    public static JsonReader of(Map<String, Object> data, String delimiter){
+        return new JsonReader(data, delimiter);
     }
 
-    public static JsonData of(Map<String, Object> data){
+    public static JsonReader of(Map<String, Object> data){
         return of(data, "\\.");
     }
 

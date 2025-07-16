@@ -1,6 +1,6 @@
 package org.tommy.test;
 
-import org.tommy.model.JsonData;
+import org.tommy.model.JsonReader;
 import org.tommy.model.JsonDataHandler;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,13 +17,13 @@ public class JsonDataTest {
         JsonDataHandler handler = new JsonDataHandler();
         Object data = handler.extractJsonData(json);
         if(data instanceof Map){
-            JsonData jsonData = (JsonData)handler.extractJsonData(json);
-            String name = jsonData.getValueForKey("name");
+            JsonReader jsonReader = (JsonReader)handler.extractJsonData(json);
+            String name = jsonReader.getValueForKey("name");
             if(!"Tommy".equals(name)){
                 throw new AssertionError("Expected name to be 'Tommy', but got: " + name);
 
             }
-            long age = (long)jsonData.getValueForKey("age");
+            long age = (long) jsonReader.getValueForKey("age");
             if(30!=age){
                 throw new AssertionError("Expected age to be 30, but got: " + age);
             }
@@ -36,7 +36,7 @@ public class JsonDataTest {
     public void testNestedJson() {
         String json = "{\"person\":{\"name\":\"Tommy\",\"age\":30}}";
         JsonDataHandler handler = new JsonDataHandler();
-        JsonData data = (JsonData)handler.extractJsonData(json);
+        JsonReader data = (JsonReader)handler.extractJsonData(json);
         String name = data.getValueForKey("person.name");
         if(!"Tommy".equals(name)){
             throw new AssertionError("Expected name to be 'Tommy', but got: " + name);
@@ -51,7 +51,7 @@ public class JsonDataTest {
     public void testJsonWithList() {
         String json = "{\"scores\":[90, 80, 85]}";
         JsonDataHandler handler = new JsonDataHandler();
-        JsonData data = (JsonData)handler.extractJsonData(json);
+        JsonReader data = (JsonReader)handler.extractJsonData(json);
 
         if ( (long)data.getValueForKey("scores[0]") != 90) {
             throw new AssertionError("Expected scores[0] to be 90");
@@ -69,7 +69,7 @@ public class JsonDataTest {
     public void testComplexJson() {
         String json = "{\"students\":[{\"name\":\"A\"},{\"name\":\"B\"}]}";
         JsonDataHandler handler = new JsonDataHandler();
-        JsonData data = (JsonData)handler.extractJsonData(json);
+        JsonReader data = (JsonReader)handler.extractJsonData(json);
 
         if(!"A".equals(data.getValueForKey("students[0].name"))){
             throw new AssertionError("Expected students[0].name to be A");
@@ -86,12 +86,12 @@ public class JsonDataTest {
         JsonDataHandler handler = new JsonDataHandler();
         Object data = handler.extractJsonData(json);
         if(data instanceof List){
-            List<JsonData> jsonDataList = (List<JsonData>)data;
-            String name1 =jsonDataList.get(0).getValueForKey("name");
+            List<JsonReader> jsonReaderList = (List<JsonReader>)data;
+            String name1 = jsonReaderList.get(0).getValueForKey("name");
             if(!name1.equals("Tommy")){
                 throw new AssertionError("Expected name to be Tommy");
             }
-            String name2 = jsonDataList.get(1).getValueForKey("name");
+            String name2 = jsonReaderList.get(1).getValueForKey("name");
             if(!name2.equals("Jerry")){
                 throw new AssertionError("Expected name to be Jerry");
             }
