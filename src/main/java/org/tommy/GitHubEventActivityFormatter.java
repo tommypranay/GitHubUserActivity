@@ -6,8 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Formats GitHub event data into human-readable strings.
+ * <p>
+ * This class maps different event types from the GitHub API
+ * into string representations suitable for display.
+ * Each supported event type has a corresponding formatter method.
+ */
+
 public class GitHubEventActivityFormatter {
 
+    /**
+     * Accepts a list of {@link JsonReader} representing GitHub event data and formats each
+     * event into a user-friendly string based on the event type.
+     *
+     * @param jsonDataList List of parsed GitHub event data
+     * @return A list of formatted event descriptions
+     * @throws IllegalArgumentException if an unsupported event type is encountered
+     */
 
     public List<String> formatEvents(List<JsonReader> jsonDataList){
         List<String> formattedEvents = new ArrayList<>();
@@ -54,6 +70,9 @@ public class GitHubEventActivityFormatter {
         }
         return formattedEvents;
     }
+
+    // Individual formatter methods for supported event types.
+    // Each method below extracts relevant fields and returns a descriptive string.
 
     private String memberEventFormatter(JsonReader readerData){
         String member = readerData.getValueForKey("payload.member.login");
